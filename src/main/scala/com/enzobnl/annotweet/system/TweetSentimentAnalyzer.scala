@@ -79,7 +79,7 @@ trait TweetSentimentAnalyzer {
     * @param nChunks: default is df.count() meaning that a "one out cross validation" will be performed
     * @return
     */
-  def crossValidate(nChunks: Int=_df.count().toInt): Double ={
+  def crossValidate(nChunks: Int=_df.count().toInt, params: Map[String, AnyVal]=Map()): Double ={
     if(nChunks <= 1) throw new IllegalArgumentException("nChunks must be > 1")
     // Split data in nChunks
     val dfs: Array[DataFrame] = loadData("data.txt").randomSplit((for (_ <- 1 to nChunks) yield 1.0).toList.toArray)
@@ -94,7 +94,7 @@ trait TweetSentimentAnalyzer {
         if (i_df._1 != i)
           (i_df._1 + 1, if(i_df._2 != null) i_df._2.union(df) else df)
         else (i_df._1 + 1, i_df._2))._2
-      train(trainDF)
+      train(trainDF, params)
       // test on the i-th df in dfs of size ~= 1/nChunks and add evaluated accuracy to accuraciesList
       accuraciesList = accuraciesList :+ evaluator.evaluate(_pipelineModel.transform(dfs(i)))
     }

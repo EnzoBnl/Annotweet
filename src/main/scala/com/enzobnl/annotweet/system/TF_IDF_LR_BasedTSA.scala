@@ -18,7 +18,7 @@ class TF_IDF_LR_BasedTSA extends TweetSentimentAnalyzer {
       val maxIter: Int= params.getOrElse("maxIter", 100).asInstanceOf[Int]
       val numFeatures: Int = params.getOrElse("numFeatures", Math.pow(2, 16).toInt).asInstanceOf[Int]
       val minDocFreq: Int = params.getOrElse("minDocFreq", 5).asInstanceOf[Int]
-
+      println(maxIter, numFeatures, minDocFreq)
       val tokenizer = new Tokenizer().setInputCol("text").setOutputCol("words")
       val hashtf = new HashingTF().setNumFeatures(numFeatures).setInputCol("words").setOutputCol("tf")
       val idf = new IDF().setMinDocFreq(minDocFreq).setInputCol("tf").setOutputCol("features")

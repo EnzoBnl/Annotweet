@@ -15,6 +15,8 @@ object Main extends App {
   println(model1.crossValidate(2))
   println(model1.crossValidate(4))
   println(model1.crossValidate(15))
+  println(model1.crossValidate(15, Map("minDocFreq"->0)))
+
 
   //  println(model1.tag("Renaissance de #macron"))
 //  println(model1.tag("par-dessus la tête #macron"))
