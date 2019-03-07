@@ -1,5 +1,4 @@
-package com.enzobnl.annotweet.system
-
+package com.enzobnl.annotweet.systems
 
 object Tag extends Enumeration {
   val Neg, Neu, Pos, Irr, Nothing = Value

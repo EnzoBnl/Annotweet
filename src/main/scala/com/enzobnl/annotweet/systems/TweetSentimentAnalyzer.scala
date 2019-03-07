@@ -1,9 +1,9 @@
-package com.enzobnl.annotweet.system
+package com.enzobnl.annotweet.systems
 
 import java.io.IOException
 
-import com.enzobnl.annotweet.utils.QuickSQLContextFactory
-import org.apache.spark.ml.PipelineModel
+import com.enzobnl.annotweet.utils.{QuickSQLContextFactory, Utils}
+import org.apache.spark.ml.{Pipeline, PipelineModel, PipelineStage}
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.sql.{DataFrame, SQLContext}
 
@@ -14,9 +14,10 @@ trait TweetSentimentAnalyzer {
 
 
   protected lazy val _spark: SQLContext = QuickSQLContextFactory.getOrCreate("annotweet")
-  protected var _pipelineModel: PipelineModel = null
-  protected val _df: DataFrame = loadData("data.txt")
+  protected var _pipelineModel: PipelineModel = null //TODO ???
+  protected lazy val _df: DataFrame = loadData("air.txt")
 
+  var verbose: Boolean = true
 
   def isTrained = _pipelineModel != null
   /**
@@ -55,9 +56,8 @@ trait TweetSentimentAnalyzer {
     * @return
     */
   def loadData(datasetName: String): DataFrame = {
-    _spark.read.option("delimiter", ")").csv(getDataPath("data.txt")).createOrReplaceGlobalTempView("temp")
-    _spark.sql("""SELECT regexp_extract(_c0, '\\(([^,]*),(.*)', 1) AS id,regexp_extract(_c0, '\\(([^,]*),(.*)', 2) AS target,_c1 AS text FROM global_temp.temp""".stripMargin)
-  }
+    _spark.read.option("delimiter", ")").csv(getDataPath(datasetName)).createOrReplaceGlobalTempView("temp")
+    _spark.sql("""SELECT regexp_extract(_c0, '\\(([^,]*),(.*)', 1) AS id,regexp_extract(_c0, '\\(([^,]*),(.*)', 2) AS target,_c1 AS text FROM global_temp.temp""".stripMargin)}
 
   /**
     * Tag a single tweet text
@@ -72,17 +72,22 @@ trait TweetSentimentAnalyzer {
     * @param params: system hyperparameters map
     * @return time elapsed
     */
-  def train(trainDF: DataFrame=_df, params: Map[String, AnyVal]=Map()): Double
+  def train(trainDF: DataFrame=_df, params: Map[String, AnyVal]=Map(), stages: Array[PipelineStage]=Array()): Double = {
+    Utils.getTime {
+      val pipeline = new Pipeline().setStages(stages)
+      this._pipelineModel = pipeline.fit(trainDF)
+    }
+  }
 
   /**
     * CrossValidation with nChunks the numbers of chunks made out of DATA_PATH dataset
     * @param nChunks: default is df.count() meaning that a "one out cross validation" will be performed
-    * @return
+    * @return (Mean, Stddev)
     */
-  def crossValidate(nChunks: Int=_df.count().toInt, params: Map[String, AnyVal]=Map()): Double ={
+  def crossValidate(nChunks: Int=_df.count().toInt, params: Map[String, AnyVal]=Map()): (Double, Double) ={
     if(nChunks <= 1) throw new IllegalArgumentException("nChunks must be > 1")
     // Split data in nChunks
-    val dfs: Array[DataFrame] = loadData("data.txt").randomSplit((for (_ <- 1 to nChunks) yield 1.0).toList.toArray)
+    val dfs: Array[DataFrame] = _df.randomSplit((for (_ <- 1 to nChunks) yield 1.0).toList.toArray)
     // List that will be feed by accuracies (size will be nChunks
     var accuraciesList = List[Double]()
     // Evaluator (compare label column to predictedLabel
@@ -99,6 +104,7 @@ trait TweetSentimentAnalyzer {
       accuraciesList = accuraciesList :+ evaluator.evaluate(_pipelineModel.transform(dfs(i)))
     }
     // return mean accuracy
-    accuraciesList.sum/nChunks
+    val mean = accuraciesList.sum/nChunks
+    (mean, Math.sqrt(accuraciesList.foldLeft[Double](0)((acc: Double, t: Double) => acc + Math.pow(t - mean, 2))/nChunks))
   }
 }
