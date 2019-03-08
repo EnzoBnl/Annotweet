@@ -23,7 +23,7 @@ trait TweetSentimentAnalyzer {
   /**
     * Save trained model
     * @param modelID
-    * @return
+    * @return true if all went ok, else false
     */
   def save(modelID: String): Boolean = {
     try{
@@ -39,7 +39,7 @@ trait TweetSentimentAnalyzer {
   /**
     * Load a saved model (saved with trained
     * @param modelID
-    * @return
+    * @return true if all went ok, else false
     */
   def load(modelID: String): Boolean = {
     try{
@@ -60,6 +60,13 @@ trait TweetSentimentAnalyzer {
     _spark.sql("""SELECT regexp_extract(_c0, '\\(([^,]*),(.*)', 1) AS id,regexp_extract(_c0, '\\(([^,]*),(.*)', 2) AS target,_c1 AS text FROM global_temp.temp""".stripMargin)}
 
   /**
+    * Create single line df from unlabelled row tweet text
+    * @param tweet
+    * @return single lined df [id, target, test]
+    */
+  def tweetToDF(tweet: String): DataFrame = _spark.createDataFrame(Seq(Tuple3("0", "???", tweet))).toDF("id", "target", "text")
+
+  /**
     * Tag a single tweet text
     * @param tweet
     * @return
@@ -69,22 +76,16 @@ trait TweetSentimentAnalyzer {
   /**
     * Train system.
     * @param trainDF: default: entire dataFrame
-    * @param params: system hyperparameters map
     * @return time elapsed
     */
-  def train(trainDF: DataFrame=_df, params: Map[String, AnyVal]=Map(), stages: Array[PipelineStage]=Array()): Double = {
-    Utils.getTime {
-      val pipeline = new Pipeline().setStages(stages)
-      this._pipelineModel = pipeline.fit(trainDF)
-    }
-  }
+  def train(trainDF: DataFrame=_df): Double
 
   /**
     * CrossValidation with nChunks the numbers of chunks made out of DATA_PATH dataset
     * @param nChunks: default is df.count() meaning that a "one out cross validation" will be performed
     * @return (Mean, Stddev)
     */
-  def crossValidate(nChunks: Int=_df.count().toInt, params: Map[String, AnyVal]=Map()): (Double, Double) ={
+  def crossValidate(nChunks: Int=_df.count().toInt): (Double, Double) ={
     if(nChunks <= 1) throw new IllegalArgumentException("nChunks must be > 1")
     // Split data in nChunks
     val dfs: Array[DataFrame] = _df.randomSplit((for (_ <- 1 to nChunks) yield 1.0).toList.toArray)
@@ -99,12 +100,16 @@ trait TweetSentimentAnalyzer {
         if (i_df._1 != i)
           (i_df._1 + 1, if(i_df._2 != null) i_df._2.union(df) else df)
         else (i_df._1 + 1, i_df._2))._2
-      train(trainDF, params)
+      train(trainDF)
       // test on the i-th df in dfs of size ~= 1/nChunks and add evaluated accuracy to accuraciesList
       accuraciesList = accuraciesList :+ evaluator.evaluate(_pipelineModel.transform(dfs(i)))
     }
     // return mean accuracy
     val mean = accuraciesList.sum/nChunks
     (mean, Math.sqrt(accuraciesList.foldLeft[Double](0)((acc: Double, t: Double) => acc + Math.pow(t - mean, 2))/nChunks))
+  }
+
+  def loadOrTrain(modelID: String, trainDF: DataFrame=_df, params: Map[String, AnyVal]=Map(), stages: Array[PipelineStage]=Array()): Unit = {
+    if(!this.load(modelID)) this.train(trainDF)
   }
 }
