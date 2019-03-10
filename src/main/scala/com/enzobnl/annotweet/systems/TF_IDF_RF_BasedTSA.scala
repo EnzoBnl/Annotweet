@@ -1,28 +1,26 @@
 package com.enzobnl.annotweet.systems
 
-import org.apache.spark.ml.{Pipeline, PipelineStage}
-import org.apache.spark.ml.classification.LogisticRegression
-import org.apache.spark.ml.feature._
 import com.enzobnl.annotweet.utils.Utils
+import org.apache.spark.ml.classification.{LogisticRegression, RandomForestClassifier}
+import org.apache.spark.ml.feature._
+import org.apache.spark.ml.{Pipeline, PipelineStage}
 import org.apache.spark.sql.DataFrame
 
 import scala.collection.mutable.WrappedArray
 
-
-class TF_IDF_LR_BasedTSA extends TweetSentimentAnalyzer {
+class TF_IDF_RF_BasedTSA extends TweetSentimentAnalyzer {
   _options = this.options ++ Map(
     "useSmileysTreatment" -> true,
     "useButFilter" -> true,
     "butWord" -> "but",
     "usePunctuationTreatment" -> true,
     "punctuations" -> "\\.:,);(!?",
-    "useIsTreatment" -> false,
+    "useIsTreatment" -> true,
     "useTabulationTreatment" -> true,
     "useHashtagsTreatment" -> true,
     "useFillersRemoving" -> true,
     "useWordsPairs" -> true,
-    "fillers" -> Fillers(Array("the",""," ","of","it","\t","a","an","his","her","theirs","yours","ours","our","him")),
-    "maxIter" -> 100,
+    "fillers" -> Array("the",""," ","of","it","\t"), // csv
     "numFeatures" -> Math.pow(2, 16).toInt,
     "minDocFreq" -> 4
   )
@@ -55,7 +53,7 @@ class TF_IDF_LR_BasedTSA extends TweetSentimentAnalyzer {
       }
       //fillersRemoving
       if(options("useFillersRemoving").asInstanceOf[Boolean]) {
-        val fillers = options("fillers").asInstanceOf[Fillers].array
+        val fillers = options("fillers").asInstanceOf[Array[String]]
         _spark.udf.register("fr", (wa: WrappedArray[String]) => wa.filter(!fillers.contains(_)))
         stages = stages :+ new SQLTransformer().setStatement(s"""SELECT id, target, text, fr(words) AS words FROM __THIS__""")
       }
@@ -69,14 +67,15 @@ class TF_IDF_LR_BasedTSA extends TweetSentimentAnalyzer {
         _spark.udf.register("htt", (wa: WrappedArray[String]) => wa.foldRight[WrappedArray[String]](WrappedArray.empty[String])((word: String, newWa: WrappedArray[String]) => if (word.startsWith("#")) word.substring(1) +: newWa :+ word else word +: newWa))
         stages = stages :+ new SQLTransformer().setStatement(s"""SELECT id, target, text, htt(words) AS words FROM __THIS__""")
       }
+      //http://t.co/UT5GrRwAaA
       //TF-IDF
       stages = stages :+ new HashingTF().setNumFeatures(options("numFeatures").asInstanceOf[Int]).setInputCol("words").setOutputCol("tf")
       stages = stages :+ new IDF().setMinDocFreq(options("minDocFreq").asInstanceOf[Int]).setInputCol("tf").setOutputCol("features")
       stages = stages :+ new StringIndexer().setHandleInvalid("keep").setInputCol("target").setOutputCol("label")
       val labels = new StringIndexer().setHandleInvalid("keep").setInputCol("target").setOutputCol("label").fit(trainDF).labels
-
+      
       //LR
-      stages = stages :+ new LogisticRegression().setMaxIter(options("maxIter").asInstanceOf[Int]).setFeaturesCol("features").setLabelCol("label").setPredictionCol("predictedLabel")
+      stages = stages :+ new RandomForestClassifier().setFeaturesCol("features").setLabelCol("label").setPredictionCol("predictedLabel")
       //revert back to string labels
       stages = stages :+ new IndexToString().setInputCol("predictedLabel").setOutputCol("unindexedLabel").setLabels(labels)
 
