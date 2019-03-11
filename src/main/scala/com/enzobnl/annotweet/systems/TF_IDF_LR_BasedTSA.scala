@@ -21,7 +21,7 @@ class TF_IDF_LR_BasedTSA extends TweetSentimentAnalyzer {
     "useHashtagsTreatment" -> true,
     "useFillersRemoving" -> true,
     "useWordsPairs" -> true,
-    "fillers" -> Fillers(Array("the",""," ","of","it","\t","a","an","his","her","theirs","yours","ours","our","him")),
+    "fillers" -> List("the",""," ","of","it","\t","a","an","his","her","theirs","yours","ours","our","him"),
     "maxIter" -> 100,
     "numFeatures" -> Math.pow(2, 16).toInt,
     "minDocFreq" -> 4
@@ -55,7 +55,7 @@ class TF_IDF_LR_BasedTSA extends TweetSentimentAnalyzer {
       }
       //fillersRemoving
       if(options("useFillersRemoving").asInstanceOf[Boolean]) {
-        val fillers = options("fillers").asInstanceOf[Fillers].array
+        val fillers = options("fillers").asInstanceOf[List[String]]
         _spark.udf.register("fr", (wa: WrappedArray[String]) => wa.filter(!fillers.contains(_)))
         stages = stages :+ new SQLTransformer().setStatement(s"""SELECT id, target, text, fr(words) AS words FROM __THIS__""")
       }

@@ -3,8 +3,7 @@ package com.enzobnl.annotweet.systems
 import java.io.IOException
 
 import com.enzobnl.annotweet.utils.{QuickSQLContextFactory, Utils}
-import org.apache.spark.ml.{Pipeline, PipelineModel, PipelineStage}
-import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
+import org.apache.spark.ml.PipelineModel
 import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 
 trait TweetSentimentAnalyzer {
@@ -18,6 +17,7 @@ trait TweetSentimentAnalyzer {
     _options += (key -> value)
     this
   }
+
   def options: Map[String, Any] = _options
 
   def getDatasetPath(datasetName: String): String = options("dataPath").asInstanceOf[String] +"/" + datasetName
@@ -90,36 +90,6 @@ trait TweetSentimentAnalyzer {
     */
   def transformTweet(tweet: String): Row = _pipelineModel.transform(tweetToDF(tweet)).collect()(0)
 
-//  /**
-//    * CrossValidation with nChunks the numbers of chunks made out of DATA_PATH dataset
-//    * @param nChunks: default is df.count() meaning that a "one out cross validation" will be performed
-//    * @return (Mean, Stddev)
-//    */
-//  def crossValidate(nChunks: Int=defaultDF.count().toInt): TSACrossValidationResult ={
-//    if(nChunks <= 1) throw new IllegalArgumentException("nChunks must be > 1")
-//    // Split data in nChunks
-//    val dfs: Array[DataFrame] = defaultDF.randomSplit((for (_ <- 1 to nChunks) yield 1.0).toList.toArray)
-//    // List that will be feed by accuracies (size will be nChunks
-//    var accuraciesList = List[Double]()
-//    // Evaluator (compare label column to predictedLabel
-//    val evaluator = new MulticlassClassificationEvaluator().setLabelCol("label").setPredictionCol("predictedLabel")
-//    // nChunks loops
-//    for(i <- 0 until nChunks){
-//      if (options("verbose").asInstanceOf[Boolean]) println(s"step ${i+1}/$nChunks:::")
-//      // build trainDF of size ~= (nChunks - 1)/nChunks
-//      var trainDF: DataFrame = dfs.foldLeft[(Int, DataFrame)]((0, null))((i_df: (Int, DataFrame), df: DataFrame) =>
-//        if (i_df._1 != i)
-//          (i_df._1 + 1, if(i_df._2 != null) i_df._2.union(df) else df)
-//        else (i_df._1 + 1, i_df._2))._2
-//      train(trainDF)
-//      // test on the i-th df in dfs of size ~= 1/nChunks and add evaluated accuracy to accuraciesList
-//      accuraciesList = accuraciesList :+ evaluator.evaluate(_pipelineModel.transform(dfs(i)))
-//    }
-//    // return mean accuracy
-//
-//    val mean = accuraciesList.sum/nChunks
-//    TSACrossValidationResult(mean, Math.sqrt(accuraciesList.foldLeft[Double](0)((acc: Double, t: Double) => acc + Math.pow(t - mean, 2))/nChunks))
-//  }
 
   /**
     * Load modelID model, else train it on trainDF
