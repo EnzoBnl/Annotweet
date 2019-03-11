@@ -26,22 +26,22 @@ object TSACrossValidation {
     * new TF_IDF_LR_BasedTSA()))
     *
     * @param df
-    * @param models
+    * @param modelBuilders
     * @param nChunks : default is df.count() meaning that a "one out cross validation" will be performed
     * @param verbose
     * @return best model options
     */
-  def crossValidate(df: DataFrame, models: Array[TweetSentimentAnalyzer], nChunks: Int = 10, verbose: Boolean = true): (TSACrossValidationResult, Map[String, Any]) = {
+  def crossValidate(df: DataFrame, modelBuilders: Array[ModelBuilder], nChunks: Int = 10, metricName: String = "accuracy", verbose: Boolean = true): (TSACrossValidationResult, Map[String, Any]) = {
     if (nChunks <= 1) throw new IllegalArgumentException("nChunks must be > 1")
     // Split data in nChunks
     val dfs: Array[DataFrame] = df.randomSplit((for (_ <- 1 to nChunks) yield 1.0).toList.toArray)
     // List that will be feed by accuracies (size will be nChunks
     var accuraciesList = List[Double]()
     // Evaluator (compare label column to predictedLabel
-    val evaluator = new MulticlassClassificationEvaluator().setMetricName("accuracy").setLabelCol("label").setPredictionCol("predictedLabel")
+    val evaluator = new MulticlassClassificationEvaluator().setMetricName(metricName)
     var bestModel: (TSACrossValidationResult, Map[String, Any]) = (TSACrossValidationResult(0, 0), null)
     //models loop
-    for (model <- models) {
+    for (modelBuilder <- modelBuilders) {
       // nChunks loops
       for (i <- 0 until nChunks) {
         if (verbose) print(s"step ${i + 1}/$nChunks:::")
@@ -50,9 +50,10 @@ object TSACrossValidation {
           if (i_df._1 != i)
             (i_df._1 + 1, if (i_df._2 != null) i_df._2.union(df) else df)
           else (i_df._1 + 1, i_df._2))._2
-        model.train(trainDF)
+        val model = modelBuilder.train(trainDF)
         // test on the i-th df in dfs of size ~= 1/nChunks and add evaluated accuracy to accuraciesList
-        val accuracy = evaluator.evaluate(model.pipelineModel.transform(dfs(i)))
+        evaluator.setLabelCol(modelBuilder.labelCol).setPredictionCol(modelBuilder.predictionCol)
+        val accuracy = evaluator.evaluate(model.transform(dfs(i)))
         accuraciesList = accuraciesList :+ accuracy
         if (verbose) println("-->", accuracy)
 
@@ -60,8 +61,8 @@ object TSACrossValidation {
       // return mean accuracy
       val mean = accuraciesList.sum / nChunks
       val res = TSACrossValidationResult(mean, Math.sqrt(accuraciesList.foldLeft[Double](0)((acc: Double, t: Double) => acc + Math.pow(t - mean, 2)) / nChunks))
-      if(res.mean > bestModel._1.mean) bestModel = (res, model.options)
-      if (verbose) println((res, model.options))
+      if(res.mean > bestModel._1.mean) bestModel = (res, modelBuilder.options)
+      if (verbose) println((res, modelBuilder.options))
       accuraciesList = List[Double]()
     }
     bestModel

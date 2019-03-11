@@ -1,5 +1,6 @@
 package com.enzobnl.annotweet.utils
 
+
 object Utils {
   def time[R](block: => R): R = {
     val t0 = System.nanoTime()
