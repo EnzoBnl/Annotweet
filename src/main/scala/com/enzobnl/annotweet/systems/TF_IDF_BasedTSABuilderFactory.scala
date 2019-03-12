@@ -41,7 +41,7 @@ object TF_IDF_BasedTSABuilderFactory {
         "useFillersRemoving" -> true,
         "fillers" -> List("the", "", " ", "of", "it", "\t", "a", "an", "his", "her", "theirs", "yours", "ours", "our", "him"),
         "useWordsPairs" -> true,
-        "useTrigrams" -> false,
+        "useTrigrams" -> false, //TODO: upgrade it, in state it is ad for performances
         "useLinksTreatment" -> true, //true (best): treat, false: filter out links, null: do nothing (hard to interpret the result)
         "numFeatures" -> Math.pow(2, 16).toInt,
         "minDocFreq" -> 4)
@@ -80,7 +80,7 @@ object TF_IDF_BasedTSABuilderFactory {
         }
         //trigram: [word] -> [word, wor, ord] (don't apply on hashtags
         if (options("useTrigrams").asInstanceOf[Boolean]) {
-          _spark.udf.register("tg", (wa: mutable.WrappedArray[String]) => wa.foldLeft[mutable.WrappedArray[String]](mutable.WrappedArray.empty[String])((newWa: mutable.WrappedArray[String], word: String) => if (word.startsWith("#") || word.length < 4) newWa else word +: (newWa ++ (for (i <- 3 to word.length) yield word.substring(i - 3, i)))))
+          _spark.udf.register("tg", (wa: mutable.WrappedArray[String]) => wa.foldRight[mutable.WrappedArray[String]](mutable.WrappedArray.empty[String])((word: String, newWa: mutable.WrappedArray[String]) => if (word.startsWith("#") || word.length < 4) word +: newWa else word +: (newWa ++ (for (i <- 3 to word.length) yield word.substring(i - 3, i)))))
           stages = stages :+ new SQLTransformer().setStatement(s"""SELECT $idCol, $targetTagCol, $textCol, tg($wordsCol) AS $wordsCol FROM __THIS__""")
         }
         //word pairs
