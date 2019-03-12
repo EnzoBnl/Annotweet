@@ -18,7 +18,7 @@ object Main extends App {
   println(row.getAs[String]("text"))
   println(">>>WORDS:")
   println(row.getAs[String]("words"))
-  System.exit(0)
+//  System.exit(0)
   //Cross val
   println(TSACrossValidation.crossValidate(df,
     Array(
