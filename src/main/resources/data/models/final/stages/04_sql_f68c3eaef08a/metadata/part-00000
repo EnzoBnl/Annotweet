@@ -1,0 +1,1 @@
+{"class":"org.apache.spark.ml.feature.SQLTransformer","timestamp":1555540915248,"sparkVersion":"2.4.0","uid":"sql_f68c3eaef08a","paramMap":{"statement":"SELECT id, target, text, bf(words) AS words FROM __THIS__"},"defaultParamMap":{}}

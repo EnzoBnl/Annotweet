@@ -9,6 +9,13 @@ object Utils {
     println("Elapsed time: " + (t1 - t0) / Math.pow(10, 6) + "ms")
     result
   }
+
+  /**
+    *
+    * @param block
+    * @tparam R
+    * @return elapsed time in ms
+    */
   def getTime[R](block: => R): Double = {
     val t0 = System.nanoTime()
     block // call-by-name

@@ -9,6 +9,6 @@ import org.apache.spark.ml.PipelineModel
 object ModelsManager {
   val modelsPath = s"${this.getClass.getResource("/data").getFile}/../models"
   def getModelPath(modelID: String): String = s"$modelsPath/$modelID"
-  def save(model: PipelineModel, modelID: String): Unit = model.save(s"$modelsPath/$modelID")
+  def save(model: PipelineModel, modelID: String): Unit = model.save(getModelPath(modelID))
   def load(modelID: String): PipelineModel = PipelineModel.read.load(getModelPath(modelID))
 }

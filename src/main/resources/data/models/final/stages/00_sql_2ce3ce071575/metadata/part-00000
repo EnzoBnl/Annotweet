@@ -1,0 +1,1 @@
+{"class":"org.apache.spark.ml.feature.SQLTransformer","timestamp":1555540915106,"sparkVersion":"2.4.0","uid":"sql_2ce3ce071575","paramMap":{"statement":"SELECT id, target, regexp_replace(regexp_replace(text, ':[(]', ' sadsmiley '), ':[)]', ' happysmiley ') AS text FROM __THIS__"},"defaultParamMap":{}}

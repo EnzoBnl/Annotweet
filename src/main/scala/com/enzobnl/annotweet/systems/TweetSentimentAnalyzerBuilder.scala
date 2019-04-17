@@ -49,5 +49,6 @@ trait TweetSentimentAnalyzerBuilder extends ModelBuilder{
     */
   def trainOnCheckedDF(trainDF: DataFrame): PipelineModel
 
-
 }
+
+

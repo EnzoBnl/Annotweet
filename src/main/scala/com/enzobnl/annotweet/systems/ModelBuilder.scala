@@ -31,4 +31,7 @@ trait ModelBuilder {
     * @return trained model
     */
   def train(trainDF: DataFrame): PipelineModel
+
+  def registerUDFs(): Unit
+
 }

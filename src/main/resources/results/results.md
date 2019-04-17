@@ -28,3 +28,52 @@ useLinksTreatment: true better than skip links or do nothing !
 trigrams: bad idea in state
 (73.459335% +- 1.2442801%,Map(useWordsPairs -> true, useLinksTreatment -> true, algorithmClass -> LogisticRegression, verbose -> true, useTrigrams -> true, butWord -> but, useButFilter -> true, useSmileysTreatment -> true, numFeatures -> 65536, punctuations -> \.:,);(!?\t\', useFillersRemoving -> true, useHashtagsTreatment -> true, fillers -> List(the, ,  , of, it, 	, a, an, his, her, theirs, yours, ours, our, him), minDocFreq -> 4, usePunctuationTreatment -> true))
 (73.59504% +- 0.87153053%,Map(useWordsPairs -> true, useLinksTreatment -> true, algorithmClass -> LogisticRegression, verbose -> true, useTrigrams -> false, butWord -> but, useButFilter -> true, useSmileysTreatment -> true, numFeatures -> 65536, punctuations -> \.:,);(!?\t\', useFillersRemoving -> true, useHashtagsTreatment -> true, fillers -> List(the, ,  , of, it, 	, a, an, his, her, theirs, yours, ours, our, him), minDocFreq -> 4, usePunctuationTreatment -> true))
+
+ //    TF_IDF_BasedTSABuilderFactory.createWithLogisticRegression(100)
+//      .option("butWord", "mais").option("fillers", List("", " ", "\t"))
+//      .option("vectorizer", Vectorizers.WORD2VEC).option("useWordsPairs", false)
+//      .option("w2vMaxIter", 5), //(63.92414% +- 1.5922136%,Map(useWordsPairs -> false, useLinksTreatment -> true, algorithmClass -> LogisticRegression, verbose -> true, useTrigrams -> false, w2vMaxIter -> 5, butWord -> mais, useButFilter -> true, useSmileysTreatment -> true, numFeatures -> 65536, vectorizer -> WORD2VEC, useFillersRemoving -> true, punctuationsI -> \.:,\);\(!?\t\', punctuationsD -> \.:,\);\(!?\t\', useHashtagsTreatment -> true, fillers -> List(,  , 	), minDocFreq -> 4, usePunctuationIsolation -> true, usePunctuationDeletion -> false))
+
+//    TF_IDF_BasedTSABuilderFactory.createWithLogisticRegression(100)
+//      .option("butWord", "mais").option("fillers", List("", " ", "\t"))
+//      .option("vectorizer", Vectorizers.WORD2VEC).option("useWordsPairs", false)
+//      .option("w2vMaxIter", 15), // (63.72735% +- 2.5276644%,Map(useWordsPairs -> false, useLinksTreatment -> true, algorithmClass -> LogisticRegression, verbose -> true, useTrigrams -> false, w2vMaxIter -> 15, butWord -> mais, useButFilter -> true, useSmileysTreatment -> true, numFeatures -> 65536, vectorizer -> WORD2VEC, useFillersRemoving -> true, punctuationsI -> \.:,\);\(!?\t\', punctuationsD -> \.:,\);\(!?\t\', useHashtagsTreatment -> true, fillers -> List(,  , 	), minDocFreq -> 4, usePunctuationIsolation -> true, usePunctuationDeletion -> false))
+
+//    TF_IDF_BasedTSABuilderFactory.createWithLogisticRegression(100)
+//      .option("butWord", "mais").option("fillers", List("", " ", "\t"))
+//      .option("vectorizer", Vectorizers.WORD2VEC).option("useWordsPairs", false)
+//      .option("w2vMaxIter", 45),// (64.01151% +- 2.1422427%,Map(useWordsPairs -> false, useLinksTreatment -> true, algorithmClass -> LogisticRegression, verbose -> true, useTrigrams -> false, w2vMaxIter -> 45, butWord -> mais, useButFilter -> true, useSmileysTreatment -> true, numFeatures -> 65536, vectorizer -> WORD2VEC, useFillersRemoving -> true, punctuationsI -> \.:,\);\(!?\t\', punctuationsD -> \.:,\);\(!?\t\', useHashtagsTreatment -> true, fillers -> List(,  , 	), minDocFreq -> 4, usePunctuationIsolation -> true, usePunctuationDeletion -> false))
+//
+//    TF_IDF_BasedTSABuilderFactory.createWithLogisticRegression(100)
+//      .option("butWord", "mais").option("fillers", List("", " ", "\t"))
+//      .option("vectorizer", Vectorizers.WORD2VEC).option("w2vMaxIter", 5), //(63.958664% +- 2.7954533%,Map(useWordsPairs -> true, useLinksTreatment -> true, algorithmClass -> LogisticRegression, verbose -> true, useTrigrams -> false, w2vMaxIter -> 5, butWord -> mais, useButFilter -> true, useSmileysTreatment -> true, numFeatures -> 65536, vectorizer -> WORD2VEC, useFillersRemoving -> true, punctuationsI -> \.:,\);\(!?\t\', punctuationsD -> \.:,\);\(!?\t\', useHashtagsTreatment -> true, fillers -> List(,  , 	), minDocFreq -> 4, usePunctuationIsolation -> true, usePunctuationDeletion -> false))
+//
+//    TF_IDF_BasedTSABuilderFactory.createWithLogisticRegression(100)
+//      .option("butWord", "mais").option("fillers", List("", " ", "\t"))
+//      .option("vectorizer", Vectorizers.WORD2VEC).option("useWordsPairs", false), // (63.261044% +- 2.4397686%,Map(useWordsPairs -> false, useLinksTreatment -> true, algorithmClass -> LogisticRegression, verbose -> true, useTrigrams -> false, w2vMaxIter -> 100, butWord -> mais, useButFilter -> true, useSmileysTreatment -> true, numFeatures -> 65536, vectorizer -> WORD2VEC, useFillersRemoving -> true, punctuationsI -> \.:,\);\(!?\t\', punctuationsD -> \.:,\);\(!?\t\', useHashtagsTreatment -> true, fillers -> List(,  , 	), minDocFreq -> 4, usePunctuationIsolation -> true, usePunctuationDeletion -> false))
+//
+//
+//    TF_IDF_BasedTSABuilderFactory.createWithLogisticRegression(100)
+//      .option("butWord", "mais").option("fillers", List("", " ", "\t")) // (61.31188% +- 2.865864%,Map(useWordsPairs -> true, useLinksTreatment -> true, algorithmClass -> LogisticRegression, verbose -> true, useTrigrams -> false, w2vMaxIter -> 100, butWord -> mais, useButFilter -> true, useSmileysTreatment -> true, numFeatures -> 65536, vectorizer -> TF_IDF, useFillersRemoving -> true, punctuationsI -> \.:,\);\(!?\t\', punctuationsD -> \.:,\);\(!?\t\', useHashtagsTreatment -> true, fillers -> List(,  , 	), minDocFreq -> 4, usePunctuationIsolation -> true, usePunctuationDeletion -> false))
+
+
+gedit:
+dfold:
+
+(61.283237% +- 2.3173847%,Map(useWordsPairs -> true, useLinksTreatment -> true, algorithmClass -> LogisticRegression, verbose -> true, useTrigrams -> false, butWord -> mais, useButFilter -> true, useSmileysTreatment -> true, numFeatures -> 65536, useFillersRemoving -> true, punctuationsI -> \.:,\);\(!?\t\', punctuationsD -> \.:,\);\(!?\t\', useHashtagsTreatment -> true, fillers -> List(,  , 	), minDocFreq -> 4, usePunctuationIsolation -> true, usePunctuationDeletion -> false))
+
+
+
+(60.60701% +- 1.8564558%,Map(useWordsPairs -> true, useLinksTreatment -> true, algorithmClass -> LogisticRegression, verbose -> true, useTrigrams -> false, butWord -> mais, useButFilter -> true, useSmileysTreatment -> true, numFeatures -> 65536, useFillersRemoving -> true, punctuationsI -> \.:,\);\(!?\t\', punctuationsD -> \.:,\);\(!?\t\', useHashtagsTreatment -> true, fillers -> List(,  , 	), minDocFreq -> 4, usePunctuationIsolation -> true, usePunctuationDeletion -> false))
+
+
+le "vrai final avec5500 lignes wtf:
+(56.12985% +- 2.0325403%,Map(useWordsPairs -> true, useLinksTreatment -> true, algorithmClass -> LogisticRegression, verbose -> true, useTrigrams -> false, butWord -> mais, useButFilter -> true, useSmileysTreatment -> true, numFeatures -> 65536, useFillersRemoving -> true, punctuationsI -> \.:,\);\(!?\t\', punctuationsD -> \.:,\);\(!?\t\', useHashtagsTreatment -> true, fillers -> List(,  , 	), minDocFreq -> 4, usePunctuationIsolation -> true, usePunctuationDeletion -> false))
+
+
+
+ TSABuilderFactory.createWithGBT(Option(10)).option("butWord", "mais").option("fillers", List("", " ", "\t")),//(64.731285% +- 2.188939%,Map(useWordsPairs -> true, useLinksTreatment -> true, algorithmClass -> GBTClassifier, verbose -> true, useTrigrams -> false, w2vMaxIter -> 45, butWord -> mais, useButFilter -> true, maxIterClassifier -> Some(10), useSmileysTreatment -> true, numFeatures -> 65536, vectorizer -> WORD2VEC, useFillersRemoving -> true, punctuationsI -> \.:,\);\(!?\t\', punctuationsD -> \.:,\);\(!?\t\', useHashtagsTreatment -> true, fillers -> List(,  , 	), minDocFreq -> 4, usePunctuationIsolation -> true, usePunctuationDeletion -> false))
+
+  TSABuilderFactory.createWithGBT(Option(30)).option("butWord", "mais").option("fillers", List("", " ", "\t")),//(66.753334% +- 2.2610776%,Map(useWordsPairs -> true, useLinksTreatment -> true, algorithmClass -> GBTClassifier, verbose -> true, useTrigrams -> false, w2vMaxIter -> 45, butWord -> mais, useButFilter -> true, maxIterClassifier -> Some(30), useSmileysTreatment -> true, numFeatures -> 65536, vectorizer -> WORD2VEC, useFillersRemoving -> true, punctuationsI -> \.:,\);\(!?\t\', punctuationsD -> \.:,\);\(!?\t\', useHashtagsTreatment -> true, fillers -> List(,  , 	), minDocFreq -> 4, usePunctuationIsolation -> true, usePunctuationDeletion -> false))
+
+  TSA

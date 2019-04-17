@@ -16,19 +16,19 @@ case class TweetProcessor(model: PipelineModel, tsaModelBuilder: TweetSentimentA
     * @param tweet
     * @return single lined df [id, target, test]
     */
-  private def tweetToDF(tweet: String): DataFrame = _spark.createDataFrame(Seq(Tuple3("0", "???", tweet))).toDF("id", "target", "text")
+  private def tweetToDF(tweet: String, label: String): DataFrame = _spark.createDataFrame(Seq(Tuple3("0", label, tweet))).toDF("id", "target", "text")
 
   /**
     * Tag a single tweet text
     * @param tweet
     * @return tweet tag
     */
-  def tag(tweet: String): Tag.Value = Tag.get(model.transform(tweetToDF(tweet)).select(tsaModelBuilder.predictedTagCol).collect()(0).getAs[String]("unindexedLabel"))
+  def tag(tweet: String, label: String): Tag.Value = Tag.get(model.transform(tweetToDF(tweet, label)).select(tsaModelBuilder.predictedTagCol).collect()(0).getAs[String]("unindexedLabel"))
 
   /**
     * Transform a single tweet embedded in single line dataframe
     * @param tweet
     * @return transformed Row
     */
-  def transformTweet(tweet: String): Row = model.transform(tweetToDF(tweet)).collect()(0)
+  def transformTweet(tweet: String, label: String): Row = model.transform(tweetToDF(tweet, label)).collect()(0)
 }
