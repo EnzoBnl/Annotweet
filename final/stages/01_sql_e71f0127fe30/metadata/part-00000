@@ -1,1 +1,0 @@
-{"class":"org.apache.spark.ml.feature.SQLTransformer","timestamp":1555363662096,"sparkVersion":"2.4.0","uid":"sql_e71f0127fe30","paramMap":{"statement":"SELECT id, target, regexp_replace(text, 'https?://t\\.co/[a-zA-Z0-9]*', CONCAT('http', ' //t ', regexp_extract(text, 'https?://t\\.co/([a-zA-Z0-9]*)', 1), ' ')) AS text FROM __THIS__"},"defaultParamMap":{}}

@@ -2,3 +2,8 @@
 target
 *.iml
 output
+spark-warehouse
+root_projet_tadjine_bonnal
+*.tar.gz
+src/main/resources/data
+final

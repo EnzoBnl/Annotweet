@@ -1,1 +1,0 @@
-{"class":"org.apache.spark.ml.feature.SQLTransformer","timestamp":1555540915196,"sparkVersion":"2.4.0","uid":"sql_d94c33447a72","paramMap":{"statement":"SELECT id, target, regexp_replace(text, '([\\.:,\\);\\(!?\\t\\'])', ' $1 ') AS text FROM __THIS__"},"defaultParamMap":{}}
