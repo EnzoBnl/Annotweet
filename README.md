@@ -12,4 +12,4 @@ Project thought with **@motadz**
 ## With
 - Scala 2.11.8
 - Spark 2.4.0
-- (Some) Java 8
+- Java 8
