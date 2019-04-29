@@ -32,12 +32,12 @@ Here is a preview of the steps implemented from an example:
 |--|--|
 | smileys | “Macron il a une bonne testas,on dirait un Makroudh! Mais lui,il a #rien de bon **sadsmiley** #aie https://t.co/FiOiho7” |
 |URLs|“Macron il a une bonne testas,on dirait un Makroudh! Mais lui,il a #rien de bon sadsmiley  #aie **http FiOiho7**“|
-|Ponctuation|“Macron il a une bonne testas  on dirait un Makroudh **!**  Mais lui  il a #rien de bon sadsmiley  #aie http FiOiho7”|
+|Punctuation|“Macron il a une bonne testas  on dirait un Makroudh **!**  Mais lui  il a #rien de bon sadsmiley  #aie http FiOiho7”|
 |Split|[“Macron”, “il”, “a”, “une”, “bonne”, “testas”, “on”, “dirait”, “un”, “Makroudh”, “!”, “Mais”, “lui”, “il”, “a”, “#rien”, “de”, “bon”, “sadsmiley”, “#aie”, “http”, “FiOiho7”]|
-|Filtre “Mais”|[“lui”, “il”, “a”, “#rien”, “de”, “bon”, “sadsmiley”, “#aie”, “http”, “FiOiho7”]|
-|Fillers|[“lui”, “il”, “a”, “#rien”, “bon”, “sadsmiley”, “#aie”, “http”, “FiOiho7”]|
+|"But"/"Mais" filter|[“lui”, “il”, “a”, “#rien”, “de”, “bon”, “sadsmiley”, “#aie”, “http”, “FiOiho7”]|
+|Fillers removing|[“lui”, “il”, “a”, “#rien”, “bon”, “sadsmiley”, “#aie”, “http”, “FiOiho7”]|
 |Hashtags|[“lui”, “il”, “a”, **“rien”**, “bon”, “sadsmiley”, “#aie”, “http”, “FiOiho7”, **“#rien”**]|
-|Paires de mots|[“luiil”, “ila”, “arien”, “rienbon”, “bonsadsmiley”, “lui”, “il”, “a”, “rien”, “bon”, “sadsmiley”, “#aie”, “http”, “FiOiho7”, “#rien”]|
+|word pairs|[“luiil”, “ila”, “arien”, “rienbon”, “bonsadsmiley”, “lui”, “il”, “a”, “rien”, “bon”, “sadsmiley”, “#aie”, “http”, “FiOiho7”, “#rien”]|
 
 Word pairs are especially effective when the rest of the system (vectorization and / or classification) do not allow to take into account the context of the words, for example TF-IDF + Logistic Regression.
 
